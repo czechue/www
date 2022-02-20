@@ -1,26 +1,17 @@
+import type { ReactElement } from 'react'
+import type { LoaderFunction } from 'remix'
 import { Link, useLoaderData } from 'remix'
 
-export type Post = {
-  slug: string
-  title: string
+import type { Post } from '~/post'
+import { getPosts } from '~/post'
+
+export const loader: LoaderFunction = () => {
+  return getPosts()
 }
 
-export const loader = async () => {
-  const posts: Post[] = [
-    {
-      slug: 'my-first-post',
-      title: 'My First Post',
-    },
-    {
-      slug: '90s-mixtape',
-      title: 'A Mixtape I Made Just For You',
-    },
-  ]
-  return posts
-}
-
-export default function Posts() {
+export default function Posts(): ReactElement {
   const posts = useLoaderData<Post[]>()
+
   return (
     <div>
       <h1>Posts</h1>

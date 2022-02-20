@@ -1,12 +1,13 @@
-import path from 'path'
-import fs from 'fs/promises'
 import parseFrontMatter from 'front-matter'
-import invariant from 'tiny-invariant'
+import fs from 'fs/promises'
 import { marked } from 'marked'
+import path from 'path'
+import invariant from 'tiny-invariant'
 
 export type Post = {
   slug: string
   title: string
+  html: string
 }
 
 export type PostMarkdownAttributes = {
@@ -21,17 +22,20 @@ function isValidPostAttributes(
   return attributes?.title
 }
 
-export async function getPosts() {
+export async function getPosts(): Promise<Omit<Post, 'html'>[]> {
   const dir = await fs.readdir(postsPath)
   return Promise.all(
     dir.map(async (filename) => {
       const file = await fs.readFile(path.join(postsPath, filename))
       const { attributes } = parseFrontMatter(file.toString())
+
       invariant(
         isValidPostAttributes(attributes),
         `${filename} has bad meta data!`
       )
+
       return {
+        // eslint-disable-next-line require-unicode-regexp
         slug: filename.replace(/\.md$/, ''),
         title: attributes.title,
       }
@@ -39,14 +43,16 @@ export async function getPosts() {
   )
 }
 
-export async function getPost(slug: string) {
-  const filepath = path.join(postsPath, slug + '.md')
+export async function getPost(slug: string): Promise<Post> {
+  const filepath = path.join(postsPath, `${slug}.md`)
   const file = await fs.readFile(filepath)
   const { attributes, body } = parseFrontMatter(file.toString())
+
   invariant(
     isValidPostAttributes(attributes),
     `Post ${filepath} is missing attributes`
   )
+
   const html = marked(body)
   return { slug, html, title: attributes.title }
 }
