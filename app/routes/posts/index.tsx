@@ -13,15 +13,17 @@ export default function Posts(): ReactElement {
   const posts = useLoaderData<Post[]>()
 
   return (
-    <div>
-      <h1>Posts</h1>
-      <ul>
+    <>
+      <h2 className="text-xl underline">posts</h2>
+      <ul className="mt-2">
         {posts.map((post) => (
           <li key={post.slug}>
-            <Link to={post.slug}>{post.title}</Link>
+            <Link className="text-blue-500" to={`/posts/${post.slug}`}>
+              {post.title}
+            </Link>
           </li>
         ))}
       </ul>
-    </div>
+    </>
   )
 }

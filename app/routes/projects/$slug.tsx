@@ -14,13 +14,15 @@ export const loader: LoaderFunction = async ({ params }) => {
   return getPost(params.slug)
 }
 
-export default function PostSlug(): ReactElement {
+export default function ProjectSlug(): ReactElement {
   const post = useLoaderData<Post>()
 
   return (
-    <article
-      className="prose prose-neutral"
-      dangerouslySetInnerHTML={{ __html: post.html }}
-    />
+    <Layout>
+      <article
+        className="prose prose-neutral"
+        dangerouslySetInnerHTML={{ __html: post.html }}
+      />
+    </Layout>
   )
 }
